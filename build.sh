@@ -23,6 +23,9 @@ rm -rf pkg/ && mkdir pkg/
 mv tmp/*.deb pkg/
 rm -rf tmp/
 
+echo "Now executing tests..."
+debian/tests/run-tests
+
 DEB_LIST=$(perl -lne '/^Package: (.+)$/ && print $1' "${DIR_PACKAGE}/debian/control")
 for DEB in ${DEB_LIST}; do
   echo
