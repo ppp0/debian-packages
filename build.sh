@@ -23,4 +23,12 @@ rm -rf pkg/ && mkdir pkg/
 mv tmp/*.deb pkg/
 rm -rf tmp/
 
-reprepro -b "${DIR}/repo" includedeb wheezy "${DIR_PACKAGE}/pkg/"*.deb
+DEB_LIST=$(perl -lne '/^Package: (.+)$/ && print $1' "${DIR_PACKAGE}/debian/control")
+for DEB in ${DEB_LIST}; do
+  echo
+  echo "Adding ${DEB} to repo..."
+  if (reprepro -b "${DIR}/repo" list wheezy "${DEB}" | grep -q "${DEB}"); then
+    reprepro -b "${DIR}/repo" remove wheezy "${DEB}"
+  fi
+  reprepro -b "${DIR}/repo" includedeb wheezy "${DIR_PACKAGE}/pkg/${DEB}_"*.deb
+done
